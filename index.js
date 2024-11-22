@@ -8,9 +8,7 @@ const port = process.env.PROT || 5000;
 
 app.use(
 	cors({
-		origin: [
-			"http://localhost:5173",
-		],
+		origin: ["http://localhost:5173"],
 		credentials: true,
 	})
 );
@@ -34,6 +32,26 @@ async function run() {
 
 		const userCollection = client.db("wave-3-eCom").collection("users");
 
+		// middleware
+
+		//custom middleware
+
+		// middleware
+
+		const verifyToken = (req, res, next) => {
+			// console.log("verify token",req.headers.authorization);
+
+			if (!req.headers.authorization) {
+				return res.status(401).send({ message: "unauthorized access" });
+			}
+			const token = req.headers.authorization.split(" ")[1];
+			jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+				if (err)
+					return res.status(401).send({ message: "unauthorized access" });
+				req.decoded = decoded;
+				next();
+			});
+		};
 
 		// make jwt token
 
@@ -44,7 +62,6 @@ async function run() {
 			});
 			res.send({ token });
 		});
-
 
 		// Send a ping to confirm a successful connection
 		// await client.db("admin").command({ ping: 1 });
