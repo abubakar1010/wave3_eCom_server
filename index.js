@@ -84,6 +84,20 @@ async function run() {
 			next();
 		};
 
+		//verify buyer middleware
+
+		const verifyBuyer = async (req, res, next) => {
+			const email = req.decoded.email;
+
+			const query = { email };
+			const result = await usersCollection.findOne(query);
+			const isBuyer = result?.role === "buyer";
+			if (!isBuyer) {
+				return res.status(403).send({ message: "forbidden access" });
+			}
+			next();
+		};
+
 		// make jwt token
 
 		app.post("/jwt", async (req, res) => {
