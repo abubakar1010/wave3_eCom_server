@@ -10,8 +10,6 @@ app.use(
 	cors({
 		origin: [
 			"http://localhost:5173",
-			"https://thedailypulse-d0a33.web.app",
-			"https://thedailypulse-d0a33.firebaseapp.com",
 		],
 		credentials: true,
 	})
@@ -37,6 +35,15 @@ async function run() {
 		const userCollection = client.db("wave-3-eCom").collection("users");
 
 
+		// make jwt token
+
+		app.post("/jwt", async (req, res) => {
+			const user = req.body;
+			const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+				expiresIn: "1h",
+			});
+			res.send({ token });
+		});
 
 
 		// Send a ping to confirm a successful connection
