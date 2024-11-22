@@ -30,7 +30,7 @@ async function run() {
 		// Connect the client to the server	(optional starting in v4.7)
 		// await client.connect();
 
-		const userCollection = client.db("wave-3-eCom").collection("users");
+		const usersCollection = client.db("wave-3-eCom").collection("users");
 
 		// middleware
 
@@ -52,6 +52,24 @@ async function run() {
 				next();
 			});
 		};
+
+		//verify admin middleware
+
+		//verify admin middleware
+
+		const verifyAdmin = async (req, res, next) => {
+			const email = req.decoded.email;
+
+			const query = { email };
+			const result = await usersCollection.findOne(query);
+			const isAdmin = result?.role === "admin";
+			if (!isAdmin) {
+				return res.status(403).send({ message: "forbidden access" });
+			}
+			next();
+		};
+
+
 
 		// make jwt token
 
