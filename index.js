@@ -209,13 +209,24 @@ async function run() {
 
 		// fetched seller all product using seller email from product collection
 
-		app.get("/news/user/:email", verifyToken, async (req, res) => {
+		app.get("/product/user/:email", verifyToken, async (req, res) => {
 			const emailId = req.params.email;
 			// console.log(emailId);
 
 			const query = { authorEmail: emailId };
 			const result = await productCollection.find(query).toArray();
 			res.send(result);
+		});
+
+		// get specific item from product collection
+
+		app.get("/product/:id", async (req, res) => {
+			const id = req.params.id;
+
+			const query = { _id: new ObjectId(id) };
+
+			const result = await productCollection.findOne(query);
+			res.send({ result, update });
 		});
 
 		// Send a ping to confirm a successful connection
