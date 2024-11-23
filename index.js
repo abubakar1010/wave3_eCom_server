@@ -274,12 +274,10 @@ async function run() {
 			if (!product)
 				return res.status(404).json({ message: "product not found" });
 
-			res
-				.status(200)
-				.json({
-					message: "Wishlist product fetched successfully",
-					result: product,
-				});
+			res.status(200).json({
+				message: "Wishlist product fetched successfully",
+				result: product,
+			});
 		});
 		app.patch("/add-to-wishlist", async (req, res) => {
 			const { email, productId } = req.body;
@@ -308,9 +306,24 @@ async function run() {
 
 			res.json({ message: "Item added successful", result });
 		});
+		app.patch("/remove-from-wishlist", async (req, res) => {
+			const { email, productId } = req.body;
 
+			const user = await usersCollection.findOne({ email });
 
+			if (!user) return res.status(404).json({ message: "user not found" });
 
+			const result = await usersCollection.updateOne(
+				{ email },
+				{
+					$pull: {
+						wishlist: new ObjectId(String(productId)),
+					},
+				}
+			);
+
+			res.json({ message: "Item removed successful", result });
+		});
 
 		// Send a ping to confirm a successful connection
 		// await client.db("admin").command({ ping: 1 });
