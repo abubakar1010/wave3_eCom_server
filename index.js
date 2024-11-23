@@ -133,6 +133,23 @@ async function run() {
 			}
 			res.send({ admin });
 		});
+		// fetched buyer user
+
+		app.get("/users/buyer/:email", verifyToken, async (req, res) => {
+			const email = req.params.email;
+
+			if (email !== req.decoded.email)
+				return res.status(403).send({ message: "forbidden access" });
+			const filter = { email: email };
+			const result = await usersCollection.findOne(filter);
+
+			let buyer = false;
+			if (result) {
+				buyer = result?.role === "buyer";
+			}
+			res.send({ buyer });
+		});
+
 
 		// insert a user
 
