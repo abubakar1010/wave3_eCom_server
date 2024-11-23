@@ -281,6 +281,34 @@ async function run() {
 					result: product,
 				});
 		});
+		app.patch("/add-to-wishlist", async (req, res) => {
+			const { email, productId } = req.body;
+
+			const user = await userCollection.findOne({ email });
+
+			if (!user) return res.status(404).json({ message: "user not found" });
+
+			if (
+				user.wishlist &&
+				user.wishlist.map((id) => id.toString()).includes(productId.toString())
+			) {
+				return res
+					.status(409)
+					.json({ message: "Product already exists in wishlist" });
+			}
+
+			const result = await userCollection.updateOne(
+				{ email },
+				{
+					$addToSet: {
+						wishlist: new ObjectId(String(productId)),
+					},
+				}
+			);
+
+			res.json({ message: "Item added successful", result });
+		});
+
 
 
 
