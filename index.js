@@ -150,7 +150,6 @@ async function run() {
 			res.send(result);
 		});
 
-
 		// delete users
 
 		app.delete("/users/:id", verifyToken, verifyAdmin, async (req, res) => {
@@ -178,6 +177,27 @@ async function run() {
 				res.send(result);
 			}
 		);
+
+		// product endpoints
+
+		//insert item on new
+
+		app.post("/add-product", async (req, res) => {
+			const { product } = req.body;
+
+			const existedProduct = await productCollection.findOne({
+				title: product.title,
+			});
+
+			if (existedProduct) return res.json({ message: "Product already exist" });
+
+			const result = await productCollection.insertOne({
+				...product,
+				price: parseFloat(product.price),
+			});
+
+			res.json({ message: "Product successfully added", result });
+		});
 
 		// Send a ping to confirm a successful connection
 		// await client.db("admin").command({ ping: 1 });
