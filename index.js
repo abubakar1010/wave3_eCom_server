@@ -258,12 +258,10 @@ async function run() {
 
 		// wishlist endpoints
 
-		// wishlist endpoints
-
 		app.get("/wishlist/:email", async (req, res) => {
 			const email = req.params.email;
 
-			const user = await userCollection.findOne({ email });
+			const user = await usersCollection.findOne({ email });
 
 			if (!user) return res.status(404).json({ message: "user not found" });
 
@@ -282,7 +280,7 @@ async function run() {
 		app.patch("/add-to-wishlist", async (req, res) => {
 			const { email, productId } = req.body;
 
-			const user = await userCollection.findOne({ email });
+			const user = await usersCollection.findOne({ email });
 
 			if (!user) return res.status(404).json({ message: "user not found" });
 
@@ -324,6 +322,30 @@ async function run() {
 
 			res.json({ message: "Item removed successful", result });
 		});
+
+
+		// cart endpoints
+
+		app.get("/cart/:email", async (req, res) => {
+			const email = req.params.email;
+
+			const user = await usersCollection.findOne({ email });
+
+			if (!user) return res.status(404).json({ message: "user not found" });
+
+			const product = await productCollection
+				.find({ _id: { $in: user.cart } })
+				.toArray();
+
+			if (!product)
+				return res.status(404).json({ message: "product not found" });
+
+			res.status(200).json({
+				message: "cart product fetched successfully",
+				result: product,
+			});
+		});
+
 
 		// Send a ping to confirm a successful connection
 		// await client.db("admin").command({ ping: 1 });
