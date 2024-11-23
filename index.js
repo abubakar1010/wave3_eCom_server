@@ -345,6 +345,34 @@ async function run() {
 				result: product,
 			});
 		});
+		app.patch("/add-to-cart", async (req, res) => {
+			const { email, productId } = req.body;
+
+			const user = await usersCollection.findOne({ email });
+
+			if (!user) return res.status(404).json({ message: "user not found" });
+
+			if (
+				user.cart &&
+				user.cart.map((id) => id.toString()).includes(productId.toString())
+			) {
+				return res
+					.status(409)
+					.json({ message: "Product already exists in cart" });
+			}
+
+			const result = await usersCollection.updateOne(
+				{ email },
+				{
+					$addToSet: {
+						cart: new ObjectId(String(productId)),
+					},
+				}
+			);
+
+			res.json({ message: "Item added successful", result });
+		});
+
 
 
 		// Send a ping to confirm a successful connection
