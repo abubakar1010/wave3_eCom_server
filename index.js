@@ -111,11 +111,29 @@ async function run() {
 
 		// user endpoints 
 
+		// fetched all users
 		app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
 
 			const result = await usersCollection.find().toArray();
 			res.send(result);
 		});
+
+				// fetched admin user
+
+				app.get("/users/admin/:email", verifyToken, async (req, res) => {
+					const email = req.params.email;
+		
+					if (email !== req.decoded.email)
+						return res.status(403).send({ message: "forbidden access" });
+					const filter = { email: email };
+					const result = await usersCollection.findOne(filter);
+		
+					let admin = false;
+					if (result) {
+						admin = result?.role === "admin";
+					}
+					res.send({ admin });
+				});
 
 		// Send a ping to confirm a successful connection
 		// await client.db("admin").command({ ping: 1 });
