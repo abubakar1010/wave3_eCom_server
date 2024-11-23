@@ -150,7 +150,6 @@ async function run() {
 			res.send(result);
 		});
 
-		// delete user
 
 		// delete users
 
@@ -160,6 +159,25 @@ async function run() {
 			const result = await usersCollection.deleteOne(query);
 			res.send(result);
 		});
+
+		//update user
+
+		app.patch(
+			"/users/admin/:id",
+			verifyToken,
+			verifyAdmin,
+			async (req, res) => {
+				const id = req.params.id;
+				const filter = { _id: new ObjectId(id) };
+				const updatedDocs = {
+					$set: {
+						role: "admin",
+					},
+				};
+				const result = await usersCollection.updateOne(filter, updatedDocs);
+				res.send(result);
+			}
+		);
 
 		// Send a ping to confirm a successful connection
 		// await client.db("admin").command({ ping: 1 });
