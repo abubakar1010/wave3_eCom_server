@@ -150,6 +150,22 @@ async function run() {
 			res.send({ buyer });
 		});
 
+		// fetched buyer user
+
+		app.get("/users/seller/:email", verifyToken, async (req, res) => {
+			const email = req.params.email;
+
+			if (email !== req.decoded.email)
+				return res.status(403).send({ message: "forbidden access" });
+			const filter = { email: email };
+			const result = await usersCollection.findOne(filter);
+
+			let seller = false;
+			if (result) {
+				seller = result?.role === "seller";
+			}
+			res.send({ seller });
+		});
 
 		// insert a user
 
@@ -340,7 +356,6 @@ async function run() {
 			res.json({ message: "Item removed successful", result });
 		});
 
-
 		// cart endpoints
 
 		app.get("/cart/:email", async (req, res) => {
@@ -407,8 +422,6 @@ async function run() {
 
 			res.json({ message: "Item removed successful", result });
 		});
-
-
 
 		// Send a ping to confirm a successful connection
 		// await client.db("admin").command({ ping: 1 });
