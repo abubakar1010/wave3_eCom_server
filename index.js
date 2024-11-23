@@ -372,6 +372,24 @@ async function run() {
 
 			res.json({ message: "Item added successful", result });
 		});
+		app.patch("/remove-from-cart", async (req, res) => {
+			const { email, productId } = req.body;
+
+			const user = await usersCollection.findOne({ email });
+
+			if (!user) return res.status(404).json({ message: "user not found" });
+
+			const result = await usersCollection.updateOne(
+				{ email },
+				{
+					$pull: {
+						cart: new ObjectId(String(productId)),
+					},
+				}
+			);
+
+			res.json({ message: "Item removed successful", result });
+		});
 
 
 
