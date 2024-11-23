@@ -31,6 +31,7 @@ async function run() {
 		// await client.connect();
 
 		const usersCollection = client.db("wave-3-eCom").collection("users");
+		const productCollection = client.db("wave-3-eCom").collection("product");
 
 		// middleware
 
@@ -198,6 +199,13 @@ async function run() {
 
 			res.json({ message: "Product successfully added", result });
 		});
+
+				// find all product from product collection
+
+				app.get("/product", async (req, res) => {
+					const result = await productCollection.find().toArray();
+					res.send(result);
+				});
 
 		// Send a ping to confirm a successful connection
 		// await client.db("admin").command({ ping: 1 });
