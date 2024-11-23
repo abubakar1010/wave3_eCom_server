@@ -238,6 +238,24 @@ async function run() {
 			res.send(result);
 		});
 
+		app.patch("/product/:id", verifyToken, async (req, res) => {
+			const id = req.params.id;
+
+			const { title, tags, publisher, description, image } = req.body;
+			const filter = { _id: new ObjectId(id) };
+			const updatedDocs = {
+				$set: {
+					title,
+					tags,
+					publisher,
+					description,
+					image,
+				},
+			};
+			const result = await productCollection.updateOne(filter, updatedDocs);
+			res.send(result);
+		});
+
 		// Send a ping to confirm a successful connection
 		// await client.db("admin").command({ ping: 1 });
 		// console.log(
