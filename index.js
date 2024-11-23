@@ -256,6 +256,34 @@ async function run() {
 			res.send(result);
 		});
 
+		// wishlist endpoints
+
+		// wishlist endpoints
+
+		app.get("/wishlist/:email", async (req, res) => {
+			const email = req.params.email;
+
+			const user = await userCollection.findOne({ email });
+
+			if (!user) return res.status(404).json({ message: "user not found" });
+
+			const product = await productCollection
+				.find({ _id: { $in: user.wishlist } })
+				.toArray();
+
+			if (!product)
+				return res.status(404).json({ message: "product not found" });
+
+			res
+				.status(200)
+				.json({
+					message: "Wishlist product fetched successfully",
+					result: product,
+				});
+		});
+
+
+
 		// Send a ping to confirm a successful connection
 		// await client.db("admin").command({ ping: 1 });
 		// console.log(
