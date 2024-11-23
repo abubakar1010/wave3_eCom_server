@@ -200,12 +200,23 @@ async function run() {
 			res.json({ message: "Product successfully added", result });
 		});
 
-				// find all product from product collection
+		// find all product from product collection
 
-				app.get("/product", async (req, res) => {
-					const result = await productCollection.find().toArray();
-					res.send(result);
-				});
+		app.get("/product", async (req, res) => {
+			const result = await productCollection.find().toArray();
+			res.send(result);
+		});
+
+		// fetched seller all product using seller email from product collection
+
+		app.get("/news/user/:email", verifyToken, async (req, res) => {
+			const emailId = req.params.email;
+			// console.log(emailId);
+
+			const query = { authorEmail: emailId };
+			const result = await productCollection.find(query).toArray();
+			res.send(result);
+		});
 
 		// Send a ping to confirm a successful connection
 		// await client.db("admin").command({ ping: 1 });
